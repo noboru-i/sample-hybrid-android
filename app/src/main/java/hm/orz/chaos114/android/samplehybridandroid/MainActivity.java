@@ -26,12 +26,20 @@ public class MainActivity extends AppCompatActivity {
         webView = findViewById(R.id.webview);
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
+
+        // set javascript interface
         webView.addJavascriptInterface(new WebAppInterface(this), "MyApp");
+
         webView.setWebViewClient(new MyWebViewClient());
 
+        // set cookie
         CookieManager cookieManager = CookieManager.getInstance();
         cookieManager.setAcceptCookie(true);
         cookieManager.setCookie("https://noboru-i.github.io/", "foo=bar; max-age=3600");
+
+        // set user agent
+        String userAgent = webView.getSettings().getUserAgentString();
+        webView.getSettings().setUserAgentString(userAgent + " Sample-Android-App/v1.0.0");
 
         webView.loadUrl("https://noboru-i.github.io/sample-html/webview.html");
     }
@@ -51,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private class WebAppInterface {
         private Context mContext;
 
-        WebAppInterface(Context c) {
+        private WebAppInterface(Context c) {
             mContext = c;
         }
 
@@ -65,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             if (Uri.parse(url).getHost().equals("noboru-i.github.io")) {
-                // in target domain, don't override.
+                // in target domain, load normally.
                 return false;
             }
 
@@ -77,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-            // ignore ssl error for debug.
+            // ignore ssl error for using Charles.
             handler.proceed();
         }
     }
