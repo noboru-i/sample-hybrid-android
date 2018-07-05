@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         webView.onPause();
     }
 
-    private class WebAppInterface {
+    private static class WebAppInterface {
         private Context mContext;
 
         private WebAppInterface(Context c) {
