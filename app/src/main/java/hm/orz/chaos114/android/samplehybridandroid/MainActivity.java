@@ -1,20 +1,25 @@
 package hm.orz.chaos114.android.samplehybridandroid;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.net.http.SslError;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.SslErrorHandler;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     private WebView webView;
 
@@ -72,6 +77,19 @@ public class MainActivity extends AppCompatActivity {
     private class MyWebViewClient extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            Log.d(TAG, "shouldOverrideUrlLoading with String.");
+            return handleLoading(url);
+        }
+
+        @TargetApi(Build.VERSION_CODES.N)
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+            Log.d(TAG, "shouldOverrideUrlLoading with WebResourceRequest.");
+            String url = request.getUrl().toString();
+            return handleLoading(url);
+        }
+
+        private boolean handleLoading(String url) {
             if (Uri.parse(url).getHost().equals("noboru-i.github.io")) {
                 // in target domain, load normally.
                 return false;
