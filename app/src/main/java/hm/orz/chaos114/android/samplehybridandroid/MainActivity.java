@@ -90,6 +90,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         private boolean handleLoading(String url) {
+            printCookie("https://noboru-i.github.io/");
+
+            if (url.equals("sample://update_cookie")) {
+                return true;
+            }
             if (Uri.parse(url).getHost().equals("noboru-i.github.io")) {
                 // in target domain, load normally.
                 return false;
@@ -106,5 +111,14 @@ public class MainActivity extends AppCompatActivity {
             // ignore ssl error for using Charles.
             handler.proceed();
         }
+    }
+
+    private void printCookie(String url) {
+        String cookieString = CookieManager.getInstance().getCookie(url);
+        if (cookieString == null) {
+            Log.d(TAG, "cookie is empty.");
+            return;
+        }
+        Log.d(TAG, "cookie: " + cookieString);
     }
 }
