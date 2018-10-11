@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.SslErrorHandler;
@@ -16,6 +17,7 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -45,6 +47,16 @@ public class MainActivity extends AppCompatActivity {
         // set user agent
         String userAgent = webView.getSettings().getUserAgentString();
         webView.getSettings().setUserAgentString(userAgent + " Sample-Android-App/v1.0.0");
+
+        // set button handler
+        Button button = findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                execJavaScript("document.cookie = 'native_cookie=xyz;max-age=3600;path=/';");
+                execJavaScript("printCookie();");
+            }
+        });
 
         webView.loadUrl("https://noboru-i.github.io/sample-html/webview.html");
     }
@@ -120,5 +132,13 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         Log.d(TAG, "cookie: " + cookieString);
+    }
+
+    private void execJavaScript(String script) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            webView.evaluateJavascript(script, null);
+        } else {
+            webView.loadUrl("javascript:" + script);
+        }
     }
 }
